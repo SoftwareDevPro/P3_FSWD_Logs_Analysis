@@ -27,11 +27,11 @@ cur = conn.cursor()
 cur.execute(sql1)
 results = cur.fetchall()
 
-print ("What are the most popular three articles of all time?\n")
+print("What are the most popular three articles of all time?\n")
 
 for result in results:
     str = "\"%s\" - %d views" % (result[0], result[1])
-    print (str)
+    print(str)
 
 cur.close()
 
@@ -55,11 +55,11 @@ cur = conn.cursor()
 cur.execute(sql2)
 results = cur.fetchall()
 
-print ("\nWho are the most popular article authors of all time?\n")
+print("\nWho are the most popular article authors of all time?\n")
 
 for result in results:
     str = "%s - %d views" % (result[0], result[1])
-    print (str)
+    print(str)
 
 # Query 3: On which days did more than 1% of requests lead to errors?
 
@@ -88,11 +88,11 @@ cur = conn.cursor()
 cur.execute(sql3)
 results = cur.fetchall()
 
-print ("\nOn which days did more than 1% of requests lead to errors?\n")
+print("\nOn which days did more than 1% of requests lead to errors?\n")
 
 for result in results:
     str = "%s - %s%% errors" % (result[0], result[1])
-    print (str)
+    print(str)
 
 cur.close()
 
