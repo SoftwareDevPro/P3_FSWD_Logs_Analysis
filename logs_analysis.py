@@ -29,9 +29,8 @@ results = cur.fetchall()
 
 print("What are the most popular three articles of all time?\n")
 
-for result in results:
-    str = "\"%s\" - %d views" % (result[0], result[1])
-    print(str)
+for title, views in results:
+    print('"{}" - {} views'.format(title, views))
 
 cur.close()
 
@@ -57,29 +56,24 @@ results = cur.fetchall()
 
 print("\nWho are the most popular article authors of all time?\n")
 
-for result in results:
-    str = "%s - %d views" % (result[0], result[1])
-    print(str)
+for author, views in results:
+    print('{} - {} views'.format(author, views))
 
 # Query 3: On which days did more than 1% of requests lead to errors?
 
 sql3 = '''
-SELECT good.Date as date,
-       to_char((errors.NumErrors*1.0/good.NumGood)*100,'999.99') as pct
+SELECT to_char(good.Date, 'FMMonth DD, YYYY') as date,
+       to_char((errors.NumErrors*1.0/(good.NumGood+errors.NumErrors))*100,'999.99') as pct
 FROM
-(SELECT to_char(log.time, 'FMMonth DD, YYYY') as Date,
-        status,
-        COUNT(*) AS NumGood
- FROM log GROUP BY Date, status HAVING status='200 OK') good
+(SELECT date(log.time) as Date, COUNT(*) AS NumGood
+ FROM log WHERE status='200 OK' GROUP BY Date) good
 JOIN
-(SELECT to_char(log.time, 'FMMonth DD, YYYY') as Date,
-        status,
-        COUNT(*) as NumErrors
- FROM log GROUP BY Date, status HAVING status!='200 OK') errors
+(SELECT date(log.time) as Date, COUNT(*) as NumErrors
+ FROM log WHERE status!='200 OK' GROUP BY Date) errors
 ON
 good.Date=errors.Date
 WHERE
-(errors.NumErrors*1.0/good.NumGood)*100 >= 1.0
+(errors.NumErrors*1.0/(good.NumGood+errors.NumErrors))*100 >= 1.0
 ORDER BY
 pct;
 '''
@@ -90,9 +84,9 @@ results = cur.fetchall()
 
 print("\nOn which days did more than 1% of requests lead to errors?\n")
 
-for result in results:
-    str = "%s - %s%% errors" % (result[0], result[1])
-    print(str)
+for day, pct in results:
+    print('{} - {}% errors'.format(day, pct))
+
 
 cur.close()
 
