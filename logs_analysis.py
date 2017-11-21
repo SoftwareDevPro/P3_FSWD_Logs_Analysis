@@ -63,7 +63,7 @@ for author, views in results:
 
 sql3 = '''
 SELECT to_char(good.Date, 'FMMonth DD, YYYY') as date,
-       to_char((errors.NumErrors*1.0/(good.NumGood+errors.NumErrors))*100,'999.99') as pct
+       to_char((NumErrors*1.0/(NumGood+NumErrors))*100,'999.99') as pct
 FROM
 (SELECT date(log.time) as Date, COUNT(*) AS NumGood
  FROM log WHERE status='200 OK' GROUP BY Date) good
@@ -73,7 +73,7 @@ JOIN
 ON
 good.Date=errors.Date
 WHERE
-(errors.NumErrors*1.0/(good.NumGood+errors.NumErrors))*100 >= 1.0
+(NumErrors*1.0/(NumGood+NumErrors))*100 >= 1.0
 ORDER BY
 pct;
 '''
@@ -86,7 +86,6 @@ print("\nOn which days did more than 1% of requests lead to errors?\n")
 
 for day, pct in results:
     print('{} - {}% errors'.format(day, pct))
-
 
 cur.close()
 
